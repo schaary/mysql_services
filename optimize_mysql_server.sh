@@ -64,7 +64,7 @@ fi
 
 function notify_admin() # {{{
 {
-  mail_body=$0
+  local mail_body=$(cat) # liest alles von stdin
 
   for mailadresse in ${mailadressen[*]}
   do
