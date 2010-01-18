@@ -64,9 +64,11 @@ fi
 
 function notify_admin() # {{{
 {
+  mail_body=$0
+
   for mailadresse in ${mailadressen[*]}
   do
-    cat | mail -s "FEHLER bei mysqlcheck auf ${HOSTNAME} - $1" $mailadresse
+    echo $mail_body | mail -s "FEHLER bei mysqlcheck auf ${HOSTNAME} - $1" $mailadresse
   done
 }  # }}}
 
