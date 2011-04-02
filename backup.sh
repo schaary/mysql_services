@@ -390,10 +390,13 @@ fi
           -u $MYSQL_USER \
           --password=$MYSQL_PASSWORD | \
     grep -v "^test" | \
+    grep -v "^performance_schema" | \
+    grep -v "^information_schema" | \
 while read database
 do
   if test "$database" = "information_schema" -o \
-          "$database" = "test" -o 
+          "$database" = "test" -o \
+          "$database" = "performance_schema" -o
   then
     continue
   fi
