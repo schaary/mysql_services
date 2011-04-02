@@ -24,7 +24,7 @@ ENABLE_VERSION5_EXTENSIONS="TRUE"
 # wenn ja -> TRUE, wenn nein -> FALSE (default ist FALSE)
 ENABLE_MYSQLDUMP="FALSE"
 
-date=`date +%Y%m%d_%H%M_$$`
+date=`date +%Y%m%d_%H%M`
 DUMP_DIR_BASE="/archiv/backup"
 DUMP_DIR="${DUMP_DIR_BASE}/$date"
 
@@ -327,7 +327,7 @@ function is_version_5() # {{{
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # Ist noch genug Platz auf der Platte fuer ein Backup?
-DISK_SPACE=`/bin/df /dev/xvda2 | /usr/bin/grep 'xvda2' | /usr/bin/awk '{ print $4/1024/1024 }'`
+DISK_SPACE=`/bin/df /dev/xvda2 | /usr/bin/grep 'xvda2' | /usr/bin/awk '{ print int($4/1024/1024) }'`
 
 if test $DISK_SPACE -le 10
 then
