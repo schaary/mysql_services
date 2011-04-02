@@ -33,6 +33,29 @@ MYSQL_USER="root"
 MYSQL_PASSWORD=
 MYSQL_HOST="localhost"
 
+# Die Pfade zu den Programmen ermitteln
+if test -e /usr/bin/mysqlhotcopy
+then
+  MYSQLHOTCOPY=/usr/bin/mysqlhotcopy
+elif test -e /usr/local/bin/mysqlhotcopy
+then
+  MYSQLHOTCOPY=/usr/local/bin/mysqlhotcopy
+else
+  echo "Konnte das Programm mysqlhotcopy nicht finden" | notify_admin "Allgemeines Problem"
+  exit
+fi
+
+if test -e /usr/bin/mysqldump
+then
+  MYSQLDUMP=/usr/bin/mysqldump
+elif test -e /usr/local/bin/mysqldump
+then
+  MYSQLDUMP=/usr/local/bin/mysqldump
+else
+  echo "Konnte das Programm mysqldump" | notify_admin "Allgemeines Problem"
+  exit
+fi
+
 if test -e $HOME/.password/mysql_${MYSQL_HOST}_${MYSQL_USER}
 then
   source $HOME/.password/mysql_${MYSQL_HOST}_${MYSQL_USER}
@@ -83,7 +106,7 @@ function dump_create_tables() # {{{
   for table in `get_tables $database`
   do
     file=$dump_dir/create_table.$table.sql
-    mysqldump -h $MYSQL_HOST \
+    ${MYSQLDUMP} -h $MYSQL_HOST \
               -u $MYSQL_USER \
               --password=$MYSQL_PASSWORD \
               --comments \
@@ -109,7 +132,7 @@ function dump_table_data() # {{{
   for table in `get_tables $database`
   do
     file=$dump_dir/data.$table.sql
-    mysqldump -h $MYSQL_HOST \
+    ${MYSQLDUMP} -h $MYSQL_HOST \
               -u $MYSQL_USER \
               --password=$MYSQL_PASSWORD \
               --complete-insert \
@@ -172,7 +195,7 @@ function dump_create_functions() # {{{
   get_functions $database >$dump_dir/all_functions.txt
 
   (
-    mysqldump -h $MYSQL_HOST \
+    ${MYSQLDUMP} -h $MYSQL_HOST \
               -u $MYSQL_USER \
               --password=$MYSQL_PASSWORD \
               --force \
@@ -385,7 +408,7 @@ do
       mkdir -p $DUMP_DIR/hotcopy
 
       # Index-Dateien werden mit kopiert, damit wir mal ein myisamchk machen koennen
-      mysqlhotcopy -u $MYSQL_USER \
+      ${MYSQLHOTCOPY} -u $MYSQL_USER \
                    --password=$MYSQL_PASSWORD \
                    $database \
                    $DUMP_DIR/hotcopy
